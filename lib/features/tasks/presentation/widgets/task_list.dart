@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pocket_tasks_app/core/extensions/task_context_selectors.dart';
 import 'package:pocket_tasks_app/core/extensions/task_status.dart';
-import 'package:pocket_tasks_app/features/tasks/presentation/bloc/task_bloc.dart';
-
 import '../../../../core/constants/app_image.dart';
 
 class TaskList extends StatelessWidget {
@@ -12,15 +10,13 @@ class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final selectedTasks = context.select(
-      (TaskBloc bloc) => bloc.state.tasksSuccess,
-    );
+    final tasksSuccess = context.taskList;
     return Expanded(
       child: ListView.builder(
         padding: EdgeInsets.symmetric(vertical: 1.r),
-        itemCount: selectedTasks.length,
+        itemCount: tasksSuccess.length,
         itemBuilder: (_, index) {
-          final taskState = selectedTasks[index];
+          final taskState = tasksSuccess[index];
           return Padding(
             padding: EdgeInsets.only(bottom: 16.h),
             child: Container(
@@ -50,7 +46,7 @@ class TaskList extends StatelessWidget {
                         child: Text(
                           taskState.status.label,
                           style: theme.textTheme.labelSmall!.copyWith(
-                          color: taskState.status.color,
+                            color: taskState.status.color,
                           ),
                         ),
                       ),
@@ -59,14 +55,14 @@ class TaskList extends StatelessWidget {
                   ),
                   SizedBox(height: 16.h),
                   Text(
-                    taskState.title,
+                    taskState.title!,
                     style: theme.textTheme.titleMedium!.copyWith(
                       fontSize: 15.sp,
                     ),
                   ),
                   SizedBox(height: 8.h),
                   Text(
-                    taskState.note ?? "",
+                    taskState.description!,
                     style: theme.textTheme.bodySmall!.copyWith(fontSize: 12.sp),
                   ),
                   SizedBox(height: 16.h),
@@ -74,7 +70,7 @@ class TaskList extends StatelessWidget {
                     spacing: 8.r,
                     children: [
                       Image.asset(AppImage.flagImage),
-                      Text(taskState.createdAt.toString()),
+                      Text(taskState.selectedDate.toString()),
                     ],
                   ),
                 ],

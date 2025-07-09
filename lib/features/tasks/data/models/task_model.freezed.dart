@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TaskModel {
 
- String get id; String get title; String? get note; DateTime get createdAt; DateTime? get dueDate; bool get isCompleted; TaskStatus get status;
+ String? get id; String? get title; String? get description; DateTime? get selectedDate;@TimeOfDayConverter() TimeOfDay? get selectedTime; TaskStatus get status;
 /// Create a copy of TaskModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $TaskModelCopyWith<TaskModel> get copyWith => _$TaskModelCopyWithImpl<TaskModel>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.note, note) || other.note == note)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.status, status) || other.status == status));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate)&&(identical(other.selectedTime, selectedTime) || other.selectedTime == selectedTime)&&(identical(other.status, status) || other.status == status));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,note,createdAt,dueDate,isCompleted,status);
+int get hashCode => Object.hash(runtimeType,id,title,description,selectedDate,selectedTime,status);
 
 @override
 String toString() {
-  return 'TaskModel(id: $id, title: $title, note: $note, createdAt: $createdAt, dueDate: $dueDate, isCompleted: $isCompleted, status: $status)';
+  return 'TaskModel(id: $id, title: $title, description: $description, selectedDate: $selectedDate, selectedTime: $selectedTime, status: $status)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $TaskModelCopyWith<$Res>  {
   factory $TaskModelCopyWith(TaskModel value, $Res Function(TaskModel) _then) = _$TaskModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String? note, DateTime createdAt, DateTime? dueDate, bool isCompleted, TaskStatus status
+ String? id, String? title, String? description, DateTime? selectedDate,@TimeOfDayConverter() TimeOfDay? selectedTime, TaskStatus status
 });
 
 
@@ -66,15 +66,14 @@ class _$TaskModelCopyWithImpl<$Res>
 
 /// Create a copy of TaskModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? note = freezed,Object? createdAt = null,Object? dueDate = freezed,Object? isCompleted = null,Object? status = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? title = freezed,Object? description = freezed,Object? selectedDate = freezed,Object? selectedTime = freezed,Object? status = null,}) {
   return _then(_self.copyWith(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
-as DateTime?,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
-as bool,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,selectedDate: freezed == selectedDate ? _self.selectedDate : selectedDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,selectedTime: freezed == selectedTime ? _self.selectedTime : selectedTime // ignore: cast_nullable_to_non_nullable
+as TimeOfDay?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as TaskStatus,
   ));
 }
@@ -86,15 +85,14 @@ as TaskStatus,
 @JsonSerializable()
 
 class _TaskModel implements TaskModel {
-  const _TaskModel({required this.id, required this.title, this.note, required this.createdAt, this.dueDate, required this.isCompleted, required this.status});
+  const _TaskModel({required this.id, required this.title, required this.description, required this.selectedDate, @TimeOfDayConverter() required this.selectedTime, required this.status});
   factory _TaskModel.fromJson(Map<String, dynamic> json) => _$TaskModelFromJson(json);
 
-@override final  String id;
-@override final  String title;
-@override final  String? note;
-@override final  DateTime createdAt;
-@override final  DateTime? dueDate;
-@override final  bool isCompleted;
+@override final  String? id;
+@override final  String? title;
+@override final  String? description;
+@override final  DateTime? selectedDate;
+@override@TimeOfDayConverter() final  TimeOfDay? selectedTime;
 @override final  TaskStatus status;
 
 /// Create a copy of TaskModel
@@ -110,16 +108,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.note, note) || other.note == note)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.status, status) || other.status == status));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate)&&(identical(other.selectedTime, selectedTime) || other.selectedTime == selectedTime)&&(identical(other.status, status) || other.status == status));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,note,createdAt,dueDate,isCompleted,status);
+int get hashCode => Object.hash(runtimeType,id,title,description,selectedDate,selectedTime,status);
 
 @override
 String toString() {
-  return 'TaskModel(id: $id, title: $title, note: $note, createdAt: $createdAt, dueDate: $dueDate, isCompleted: $isCompleted, status: $status)';
+  return 'TaskModel(id: $id, title: $title, description: $description, selectedDate: $selectedDate, selectedTime: $selectedTime, status: $status)';
 }
 
 
@@ -130,7 +128,7 @@ abstract mixin class _$TaskModelCopyWith<$Res> implements $TaskModelCopyWith<$Re
   factory _$TaskModelCopyWith(_TaskModel value, $Res Function(_TaskModel) _then) = __$TaskModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String? note, DateTime createdAt, DateTime? dueDate, bool isCompleted, TaskStatus status
+ String? id, String? title, String? description, DateTime? selectedDate,@TimeOfDayConverter() TimeOfDay? selectedTime, TaskStatus status
 });
 
 
@@ -147,15 +145,14 @@ class __$TaskModelCopyWithImpl<$Res>
 
 /// Create a copy of TaskModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? note = freezed,Object? createdAt = null,Object? dueDate = freezed,Object? isCompleted = null,Object? status = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? title = freezed,Object? description = freezed,Object? selectedDate = freezed,Object? selectedTime = freezed,Object? status = null,}) {
   return _then(_TaskModel(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
-as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
-as DateTime?,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
-as bool,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,selectedDate: freezed == selectedDate ? _self.selectedDate : selectedDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,selectedTime: freezed == selectedTime ? _self.selectedTime : selectedTime // ignore: cast_nullable_to_non_nullable
+as TimeOfDay?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as TaskStatus,
   ));
 }

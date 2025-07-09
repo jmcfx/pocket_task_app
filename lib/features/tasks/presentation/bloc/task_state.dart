@@ -6,7 +6,12 @@ abstract class TaskState with _$TaskState {
     @Default(ViewState.idle) ViewState viewState,
     @Default(TaskStatus.upcoming) TaskStatus taskStatus,
     @Default([]) List<TaskEntity> tasksSuccess,
-    TaskEntity? editingTask,
-    String? taskFailure,
+    String ? taskFailure,
+     @Default('') String title,
+     @Default('') String description,
+    DateTime? selectedDate,
+    TimeOfDay? selectedTime,
+    String? taskId,
+
   ]) = _TaskState;
 }

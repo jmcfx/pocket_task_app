@@ -23,6 +23,7 @@ class _HomePageState extends State<HomePage> {
     final theme = Theme.of(context);
     final viewState = context.taskViewState;
     final tasksSuccess = context.taskList;
+    final taskFailure = context.taskFaiLure;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -53,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                 child: Builder(
                   builder: (_) {
                     if (viewState.isError) {
-                      return const Center(child: Text("Error"));
+                      return Center(child: Text(taskFailure ?? ""));
                     }
                     if (viewState.isLoading) {
                       return const Center(child: CircularProgressIndicator());

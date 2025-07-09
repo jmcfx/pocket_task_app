@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:pocket_tasks_app/core/extensions/task_entity_copy_with.dart';
+import '../../../../core/mappers/map_failure_to_message.dart';
 import '../../../../core/enums/task_status.dart';
 import '../../domain/use_cases/get_add_task_use_case.dart';
 import '../../domain/use_cases/get_delete_task_use_case.dart';
@@ -26,146 +26,121 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     required this.getTasksUseCase,
     required this.getUpdateTaskUseCase,
   }) : super(TaskState()) {
-    on<_AddTaskEvent>(_onAddTaskEvent);
-    on<_UpdateTaskEvent>(_onUpdateTaskEvent);
-    on<_DeleteTaskEvent>(_onDeleteTaskEvent);
-    on<_GetTasksEvent>(_onGetTasksEvent);
-    on<_DueDateChanged>(_onDueDateChanged);
-    on<_TitleChanged>(_onTitleChanged);
-    on<_DescriptionChanged>(_onDescriptionChanged);
-    on<_CreateTaskPressed>(_onCreateTaskPressed);
-    on<_ResetEditingTask>(_onResetEditingTask);
+    on<TitleChanged>(_onTitleChanged);
+    on<DescriptionChanged>(_onDescriptionChanged);
+    on<DateChanged>(_onDateChanged);
+    on<TimeChanged>(_onTimeChanged);
+    on<GetAllTasks>(_onGetAllTasks);
+    on<AddTaskPressed>(_onAddTaskPressed);
+    on<UpdateTaskPressed>(_onUpdateTaskPressed);
+    //  on<DeleteTaskPressed>(_onDeleteTaskPressed);
+    //  on<ResetForm>(_onResetForm);
+    //  on<EditExistingTask>(_onEditExistingTask);
   }
-  // add Task Event .....
-  void _onAddTaskEvent(_AddTaskEvent event, Emitter emit) async {
-    emit(state.copyWith(viewState: ViewState.loading));
-    final result = await getAddTaskUseCase(event.task);
-    result.fold((l) => emit(state.copyWith(viewState: ViewState.error)), (_) {
-      final addedTasks = List<TaskEntity>.from(state.tasksSuccess)
-        ..add(event.task);
-      emit(
-        state.copyWith(
-          taskStatus: TaskStatus.upcoming,
-          viewState: ViewState.success,
-          tasksSuccess: addedTasks,
-        ),
-      );
-    });
+  void _onTitleChanged(TitleChanged event, Emitter<TaskState> emit) {
+    emit(state.copyWith(title: event.title));
+
+  debugPrint(event.title);
   }
 
-  // UpdateDate task .....
-  void _onUpdateTaskEvent(_UpdateTaskEvent event, Emitter emit) async {
-    emit(state.copyWith(viewState: ViewState.loading));
-    final result = await getUpdateTaskUseCase(event.task);
-
-    result.fold((l) => emit(state.copyWith()), (_) {
-      final updatedTasks = state.tasksSuccess.map((task) {
-        return task.id == event.task.id ? event.task : task;
-      }).toList();
-
-      emit(
-        state.copyWith(
-          viewState: ViewState.success,
-          tasksSuccess: updatedTasks,
-        ),
-      );
-    });
+  // Description change....
+  void _onDescriptionChanged(
+    DescriptionChanged event,
+    Emitter<TaskState> emit,
+  ) {
+    emit(state.copyWith(description: event.description));
+    debugPrint(event.description);
   }
 
-  //Delete task ....
-  void _onDeleteTaskEvent(_DeleteTaskEvent event, Emitter emit) async {
-    emit(state.copyWith(viewState: ViewState.loading));
-    final result = await getDeleteTaskUseCase(
-      GetDeleteTaskParams(id: event.taskId),
-    );
-
-    result.fold((l) => emit(state.copyWith()), (_) {
-      final updatedTasks = state.tasksSuccess
-          .where((task) => task.id != event.taskId)
-          .toList();
-
-      emit(
-        state.copyWith(
-          tasksSuccess: updatedTasks,
-          viewState: ViewState.success,
-        ),
-      );
-    });
+  // dateChanged.....
+  void _onDateChanged(DateChanged event, Emitter<TaskState> emit) {
+    emit(state.copyWith(selectedDate: event.date));
+    debugPrint(event.date.toString());
   }
 
-  // get task
-  void _onGetTasksEvent(_GetTasksEvent event, Emitter emit) async {
+  // time Changed....
+  void _onTimeChanged(TimeChanged event, Emitter<TaskState> emit) {
+    emit(state.copyWith(selectedTime: event.time));
+    debugPrint(event.time.toString());
+
+  }
+
+  // get all Tasks....
+  void _onGetAllTasks(GetAllTasks event, Emitter<TaskState> emit) async {
     emit(state.copyWith(viewState: ViewState.loading));
     final result = await getTasksUseCase();
-    result.fold((l) => emit(state.copyWith()), (success) {
-      emit(state.copyWith(tasksSuccess: success, viewState: ViewState.success));
-    });
+    result.fold(
+      (l) => emit(
+        state.copyWith(
+          viewState: ViewState.error,
+          taskFailure: mapFailureToMessage(l),
+        ),
+      ),
+      (r) => emit(state.copyWith(viewState: ViewState.success, tasksSuccess: r)),
+    );
   }
 
-  //DueDateChanged.....
-  void _onDueDateChanged(_DueDateChanged event, Emitter<TaskState> emit) {
-    final task = state.editingTask;
-
+  //add Task...
+  void _onAddTaskPressed(AddTaskPressed event, Emitter<TaskState> emit) async {
     emit(
       state.copyWith(
-        editingTask: task!.copyWith(dueDate: event.date),
+        viewState: ViewState.loading,
         taskStatus: TaskStatus.upcoming,
+      ),
+    );
+    final result = await getAddTaskUseCase((
+      id: "123456",
+      title: state.title,
+      description: state.description,
+      selectedDate: state.selectedDate,
+      selectedTime: state.selectedTime,
+      status: state.taskStatus,
+    ));
+
+    result.fold(
+      (l) => emit(
+        state.copyWith(
+          viewState: ViewState.error,
+          taskFailure: mapFailureToMessage(l),
+        ),
+      ),
+      (_) => emit(
+        state.copyWith(
+          title: state.title,
+          description: state.description,
+          selectedDate: state.selectedDate,
+          selectedTime: state.selectedTime,
+          viewState: ViewState.success,
+        ),
       ),
     );
   }
 
-  //Description
-  void _onDescriptionChanged(
-    _DescriptionChanged event,
-    Emitter<TaskState> emit,
-  ) {
-    final task = state.editingTask;
-
-    emit(state.copyWith(editingTask: task!.copyWith(note: event.description)));
-  }
-
-  void _onTitleChanged(_TitleChanged event, Emitter<TaskState> emit) {
-    final task = state.editingTask;
-
-    emit(state.copyWith(editingTask: task!.copyWith(title: event.title)));
-  }
-
-  //Created TaskPressed ....
-  void _onCreateTaskPressed(
-    _CreateTaskPressed event,
+  //update Task...
+  void _onUpdateTaskPressed(
+    UpdateTaskPressed event,
     Emitter<TaskState> emit,
   ) async {
-    final task = state.editingTask;
-
-    if (task == null) return;
-
-    emit(state.copyWith(viewState: ViewState.loading, taskFailure: null));
-
-    final result = await getAddTaskUseCase(task);
+    emit(state.copyWith(viewState: ViewState.loading));
+    final result = await getUpdateTaskUseCase((
+      id: state.taskId,
+      title: state.title,
+      description: state.description,
+      selectedDate: state.selectedDate,
+      selectedTime: state.selectedTime,
+      status: state.taskStatus,
+    ));
 
     result.fold(
-      (failure) {
-        emit(
-          state.copyWith(
-            viewState: ViewState.error,
-            //   taskFailure: failure.message,
-          ),
-        );
-      },
-      (_) {
-        emit(
-          state.copyWith(
-            viewState: ViewState.success,
-            editingTask: null,
-            taskFailure: null,
-          ),
-        );
-      },
+      (l) => emit(
+        state.copyWith(
+          viewState: ViewState.error,
+          taskFailure: mapFailureToMessage(l),
+        ),
+      ),
+      (r) => emit(
+        state.copyWith(taskId: event.taskId, viewState: ViewState.success),
+      ),
     );
-  }
-
-  //reset
-  void _onResetEditingTask(_ResetEditingTask event, Emitter<TaskState> emit) {
-    emit(state.copyWith(editingTask: null));
   }
 }

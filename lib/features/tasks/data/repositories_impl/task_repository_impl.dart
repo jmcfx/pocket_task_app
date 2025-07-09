@@ -1,7 +1,7 @@
 
+import '../mappers/task_model_mapper.dart';
 import '../data_sources/task_local_data_source.dart';
-import '../../../../core/extensions/task_entity_mapper.dart';
-import '../../../../core/extensions/task_model_mapper.dart';
+import '../mappers/task_entity_mapper.dart';
 import '../../../../core/utils/repo_safe_call.dart';
 import '../../../../core/utils/type_def.dart';
 import '../../domain/entities/task_entity.dart';

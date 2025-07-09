@@ -2,15 +2,22 @@ part of 'task_bloc.dart';
 
 @freezed
 class TaskEvent with _$TaskEvent {
-  const factory TaskEvent.loadTasks() = _GetTasksEvent;
-  const factory TaskEvent.addTask(TaskEntity task) = _AddTaskEvent;
-  const factory TaskEvent.updateTask(TaskEntity task) = _UpdateTaskEvent;
-  const factory TaskEvent.deleteTask(String taskId) = _DeleteTaskEvent;
-  const factory TaskEvent.dueDateChanged(DateTime date) = _DueDateChanged;
-  const factory TaskEvent.timeChanged(TimeOfDay time) = _TimeChanged;
-  const factory TaskEvent.titleChanged(String title) = _TitleChanged;
+
+   // Form Field Events
+  const factory TaskEvent.titleChanged(String title) = TitleChanged;
   const factory TaskEvent.descriptionChanged(String description) =
-      _DescriptionChanged;
-  const factory TaskEvent.createTaskPressed() = _CreateTaskPressed;
-  const factory TaskEvent.resetEditingTask() = _ResetEditingTask;
+      DescriptionChanged;
+  const factory TaskEvent.dateChanged(DateTime date) = DateChanged;
+  const factory TaskEvent.timeChanged(TimeOfDay time) = TimeChanged;
+  const factory TaskEvent.statusChanged(TaskStatus status) = StatusChanged;
+
+  // CRUD Events
+  const factory TaskEvent.addTaskPressed() = AddTaskPressed;
+  const factory TaskEvent.updateTaskPressed(String taskId) = UpdateTaskPressed;
+  const factory TaskEvent.deleteTaskPressed(String taskId) = DeleteTaskPressed;
+  const factory TaskEvent.getAllTasks() = GetAllTasks;
+
+  // Utility
+  const factory TaskEvent.resetForm() = ResetForm;
+  const factory TaskEvent.editExistingTask(TaskEntity task) = EditExistingTask;
 }
